@@ -153,7 +153,8 @@ module Her
             record
           else
             attributes = klass.parse(record).merge(_metadata: parsed_data[:metadata],
-                                                   _errors: parsed_data[:errors])
+                                                   _errors: parsed_data[:errors],
+                                                   included: parsed_data[:included])
             klass.new(attributes).tap do |record|
               record.run_callbacks :find
             end
@@ -165,7 +166,7 @@ module Her
         # @private
         def instantiate_collection(klass, parsed_data = {})
           items = klass.extract_array(parsed_data).map do |item|
-            instantiate_record(klass, data: item)
+            instantiate_record(klass, data: item, included: parsed_data[:included])
           end
           Her::Collection.new(items, parsed_data[:metadata], parsed_data[:errors])
         end
